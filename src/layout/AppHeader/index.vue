@@ -47,12 +47,124 @@
         </el-dropdown>
       </div>
     </div>
-
+    <!--    修改密码抽屉-->
+    <el-drawer v-model='drawer' title='修改密码'>
+      <el-form ref='formRef' :model='editPasswordFormModel' :rules='rules' label-width='100px'>
+        <el-form-item label='旧密码' prop='oldPassword'>
+          <el-input v-model='editPasswordFormModel.oldPassword' placeholder='请输入旧密码' />
+        </el-form-item>
+        <el-form-item label='确认密码' prop='newPassword'>
+          <el-input v-model='editPasswordFormModel.newPassword' placeholder='请输入新密码' show-password type='password' />
+        </el-form-item>
+        <el-form-item label='确认密码' prop='confirmPassword'>
+          <el-input v-model='editPasswordFormModel.confirmPassword' placeholder='请输入确认密码' show-password
+                    type='password' />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class='dialog-footer'>
+          <el-button type='primary' @click='handleSubmit'>提交</el-button>
+          <el-button @click='drawer = false'>取消</el-button>
+        </div>
+      </template>
+    </el-drawer>
   </div>
 </template>
 
 <script setup>
-
+import { confirm } from '@/utils/confirm'
+import { useStore } from 'vuex'
+import screenfull from 'screenfull'
+import { ref, nextTick, computed, reactive } from 'vue'
+import { Notification } from '@/utils/Notification'
+// 验证规则
+const rules = {
+  oldPassword: [
+    {
+      required: true,
+      trigger: 'blur',
+      message: '旧密码不能为空'
+    }
+  ],
+  newPassword: [
+    {
+      required: true,
+      message: '新密码不能为空',
+      trigger: 'blur'
+    }
+  ],
+  confirmPassword: [
+    {
+      required: true,
+      trigger: 'blur',
+      validator: (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('确认密码不能为空'))
+        } else if (value !== editPasswordFormModel.newPassword) {
+          callback(new Error('两次输入密码不一致!'))
+        } else {
+          callback()
+        }
+      }
+    }
+  ]
+}
+// 修改密码表单
+const formRef = ref(null)
+const editPasswordFormModel = reactive({
+  oldPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+})
+const drawer = ref(false)
+const isFullscreen = ref(true)
+const screenfullTltle = computed(() => {
+  return !isFullscreen.value ? '退出全屏' : '全屏'
+})
+const store = useStore()
+const handleCommand = (command) => {
+  switch (command) {
+    case 'editPwd':
+      editPwd()
+      break
+    case 'logout':
+      logout()
+      break
+  }
+}
+// 修改密码
+const editPwd = () => {
+  drawer.value = true
+}
+// 退出登录
+const logout = async () => {
+  try {
+    await confirm('是否要退出登录？', '', 'warning', '确定', '取消')
+    store.dispatch('user/userLogout')
+  } catch (e) {
+  }
+}
+// 全屏切换
+const changeFullScreen = () => {
+  screenfull.toggle()
+  nextTick(() => {
+    isFullscreen.value = screenfull.isFullscreen
+  })
+}
+// 刷新页面
+const refresh = () => {
+  window.location.reload()
+}
+// 修改密码
+const handleSubmit = async () => {
+  try {
+    await formRef.value.validate()
+    Notification('修改密码', '', 'success')
+    drawer.value = false
+  } catch (e) {
+    console.log(e)
+  }
+}
 </script>
 
 <style lang='scss' scoped>
