@@ -1,3 +1,7 @@
+/**
+ * @author YangLing
+ * @date 2022/7/19 12:55
+ */
 // 导入axios
 import axios from 'axios'
 
@@ -21,8 +25,12 @@ service.interceptors.response.use((response) => {
   return Promise.reject(error)
 })
 
-// 统一传参处理
+// 统一了传参处理
 const request = (options) => {
+  // if (options.method.toLowerCase() === 'get') {
+  //   options.params = options.data || {}
+  // }
+  // console.log(options)
   return service(options)
 }
 
