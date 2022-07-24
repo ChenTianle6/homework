@@ -1,11 +1,16 @@
+/**
+ * @author YangLing
+ * @date 2022/7/21 11:18
+ */
 import { validatePhone, validatePass, validateEmail } from '../../utils/validate'
 const createRules = (data) => {
-  data.forEach(item=>{
+  data.forEach(item => {
     let rulesArray = []
-    if (item.required){
-      const rules = {required: true,message: item.message || createMessage(item)}
+    if (item.required) {
+      const rules = { required: true, message: item.message || createMessage(item) }
       rulesArray.push(rules)
     }
+
     // 校验手机号
     if (item.valueType && item.valueType === 'phone') {
       const rule = { validator: validatePhone, trigger: 'change' }
@@ -32,16 +37,17 @@ const createRules = (data) => {
   return data
 }
 
-const createMessage = (data) =>{
+const createMessage = (data) => {
   let msg = ''
   switch (data.type) {
-    case 'input':
+    case 'input' :
       msg = '请输入'
       break
-    case 'select':
+    case 'select' :
       msg = '请选择'
       break
   }
   return `${msg}${data.label}`
 }
+
 export default createRules

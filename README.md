@@ -4250,43 +4250,2197 @@ export default {
 
 ### 三、form组件封装
 
-#### 3.1 form组件封装 - 了解基本元素
+#### 3.1 form组件封装 - 了解基本元素,渲染基础表单
+
+`components/form/index.vue`
+
+```vue
+<template>
+  <div class="form-container">
+    <el-form ref="form" :model="form" label-width="80px">
+      <el-form-item label="活动名称">
+        <el-input v-model="form.name"></el-input>
+      </el-form-item>
+    </el-form>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'index',
+  data () {
+    return {
+      form: {
+        name: '',
+        region: '',
+        date1: '',
+        date2: '',
+        delivery: false,
+        type: [],
+        resource: '',
+        desc: ''
+      }
+    }
+  },
+  methods: {
+    onSubmit () {
+      console.log('submit!')
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
 
 #### 3.2 form组件封装 - 定义item渲染表单项
 
+`views/Form.vue`
+
+```vue
+<template>
+  <div>
+    <yang-form :item="formItem"></yang-form>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Form',
+  data () {
+    return {
+      formItem: [
+        {
+          type: 'input',
+          label: '活动名称'
+        },
+        {
+          type: 'select',
+          label: '活动区域'
+        }
+      ]
+    }
+  },
+  components: {
+    yangForm: () => import('../components/form/index')
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+`components/form/index.vue`
+
+```vue
+<template>
+  <div class="form-container">
+    <el-form ref="form" :model="form" label-width="80px">
+      <el-form-item v-for="item in formItem" :key="item.label" :label="item.label">
+        <el-input v-model="form.name"></el-input>
+      </el-form-item>
+    </el-form>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'index',
+  props: {
+    item: {
+      type: Array,
+      default: () => []
+    }
+  },
+  data () {
+    return {
+      formItem: [],
+      form: {
+        name: ''
+      }
+    }
+  },
+  methods: {
+
+  },
+  beforeMount () {
+    this.formItem = this.item
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
 #### 3.3 form组件封装 - 字段绑定
+
+`views/Form.vue`
+
+```vue
+<template>
+  <div>
+    <yang-form :item="formItem" :field="formField"></yang-form>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Form',
+  data () {
+    return {
+      formItem: [
+        {
+          type: 'input',
+          prop: 'name',
+          label: '姓名'
+        },
+        {
+          type: 'select',
+          prop: 'gender',
+          label: '性别'
+        }
+      ],
+      formField: {
+        name: '',
+        gender: ''
+      }
+    }
+  },
+  components: {
+    yangForm: () => import('../components/form/index')
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+`components/form/index.vue`
+
+```vue
+<template>
+  <div class="form-container">
+    <el-form ref="form" :model="form" label-width="80px">
+      <template v-for="item in formItem">
+        <el-form-item v-if="item.type === 'input'" :key="item.label" :label="item.label">
+          <el-input v-model="field[item.prop]"></el-input>
+        </el-form-item>
+        <el-form-item v-if="item.type === 'select'" :key="item.label" :label="item.label">
+          <el-select v-model="field[item.prop]"></el-select>
+        </el-form-item>
+      </template>
+    </el-form>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'index',
+  props: {
+    item: {
+      type: Array,
+      default: () => []
+    },
+    field: {
+      type: Object,
+      default: () => ({})
+    }
+  },
+  data () {
+    return {
+      formItem: [],
+      form: {
+        name: ''
+      }
+    }
+  },
+  methods: {
+
+  },
+  beforeMount () {
+    this.formItem = this.item
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
 
 #### 3.4 form组件封装 - 了解校验规则
 
+
+
 #### 3.5 form组件封装 - 传统方式绑定校验规则
+
+`views/Form.vue`
+
+```vue
+<template>
+  <div>
+    <yang-form :item="formItem" :field="formField" :rules="formRules"></yang-form>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Form',
+  data () {
+    return {
+      formItem: [
+        {
+          type: 'input',
+          prop: 'name',
+          label: '姓名'
+        },
+        {
+          type: 'select',
+          prop: 'gender',
+          label: '性别'
+        }
+      ],
+      formField: {
+        name: '',
+        gender: ''
+      },
+      formRules: {
+        name: [
+          {
+            required: true,
+            message: '必填'
+          }
+        ],
+        gender: [
+          {
+            required: true,
+            message: '必填'
+          }
+        ]
+      }
+    }
+  },
+  components: {
+    yangForm: () => import('../components/form/index')
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+`components/form/index.vue`
+
+```vue
+<template>
+  <div class="form-container">
+    <el-form :model="field" ref="form" :rules="rules" label-width="80px">
+      <template v-for="item in formItem">
+        <el-form-item v-if="item.type === 'input'" :key="item.label" :label="item.label" :prop="item.prop">
+          <el-input v-model="field[item.prop]"></el-input>
+        </el-form-item>
+        <el-form-item v-if="item.type === 'select'" :key="item.label" :label="item.label" :prop="item.prop">
+          <el-select v-model="field[item.prop]"></el-select>
+        </el-form-item>
+      </template>
+    </el-form>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'index',
+  props: {
+    item: {
+      type: Array,
+      default: () => []
+    },
+    field: {
+      type: Object,
+      default: () => ({})
+    },
+    rules: {
+      type: Object,
+      default: () => ({})
+    }
+  },
+  data () {
+    return {
+      formItem: [],
+      form: {
+        name: ''
+      }
+    }
+  },
+  methods: {
+
+  },
+  beforeMount () {
+    this.formItem = this.item
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
 
 #### 3.6 form组件封装 - form-item对象配置校验规则
 
+`views/Form.vue`
+
+```vue
+<template>
+  <div>
+    <yang-form :item="formItem" :field="formField" ></yang-form>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Form',
+  data () {
+    return {
+      formItem: [
+        {
+          type: 'input',
+          prop: 'name',
+          label: '姓名',
+          rules: [
+            {
+              required: true,
+              message: '必填'
+            }
+          ]
+        },
+        {
+          type: 'select',
+          prop: 'gender',
+          label: '性别',
+          rules: [
+            {
+              required: true,
+              message: '必填'
+            }
+          ]
+        }
+      ],
+      formField: {
+        name: '',
+        gender: ''
+      }
+    }
+  },
+  components: {
+    yangForm: () => import('../components/form/index')
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+`components/form/index.vue`
+
+```vue
+<template>
+  <div class="form-container">
+    <el-form :model="field" ref="form"  label-width="80px">
+      <template v-for="item in formItem">
+        <el-form-item
+          v-if="item.type === 'input'"
+          :key="item.label"
+          :label="item.label"
+          :prop="item.prop"
+          :rules="item.rules"
+        >
+          <el-input v-model="field[item.prop]"></el-input>
+        </el-form-item>
+        <el-form-item
+          v-if="item.type === 'select'"
+          :key="item.label"
+          :label="item.label"
+          :prop="item.prop"
+          :rules="item.rules"
+        >
+          <el-select v-model="field[item.prop]"></el-select>
+        </el-form-item>
+      </template>
+    </el-form>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'index',
+  props: {
+    item: {
+      type: Array,
+      default: () => []
+    },
+    field: {
+      type: Object,
+      default: () => ({})
+    },
+    rules: {
+      type: Object,
+      default: () => ({})
+    }
+  },
+  data () {
+    return {
+      formItem: [],
+      form: {
+        name: ''
+      }
+    }
+  },
+  methods: {
+
+  },
+  beforeMount () {
+    this.formItem = this.item
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
+
 #### 3.7 form组件封装 - 自定义required属性, 生成必填校验
+
+`components/form/createRules.js`
+
+```javascript
+/**
+ * @author YangLing
+ * @date 2022/7/21 09:26
+ */
+
+const createRules = (data) => {
+  data.forEach(item => {
+    const rulesArray = []
+    if (item.required) {
+      const rule = { required: true, message: '必填' }
+      rulesArray.push(rule)
+    }
+    item.rules = rulesArray
+  })
+
+  return data
+}
+
+export default createRules
+
+```
+
+`views/Form.vue`
+
+```vue
+<template>
+  <div>
+    <yang-form :item="formItem" :field="formField" ></yang-form>
+  </div>
+</template>
+
+<script>
+
+export default {
+  name: 'Form',
+  data () {
+    return {
+      formItem: [
+        {
+          type: 'input',
+          prop: 'name',
+          label: '姓名',
+          required: true
+          // rules: [
+          //   {
+          //     required: true,
+          //     message: '必填'
+          //   }
+          // ]
+        },
+        {
+          type: 'select',
+          prop: 'gender',
+          label: '性别',
+          required: true
+          // rules: [
+          //   {
+          //     required: true,
+          //     message: '必填'
+          //   }
+          // ]
+        },
+        {
+          type: 'input',
+          prop: 'sex',
+          label: '年龄',
+          required: true
+          // rules: [
+          //   {
+          //     required: true,
+          //     message: '必填'
+          //   }
+          // ]
+        }
+      ],
+      formField: {
+        name: '',
+        gender: '',
+        age: ''
+      }
+    }
+  },
+  components: {
+    yangForm: () => import('../components/form/index')
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+`components/form/index.vue`
+
+```vue
+<template>
+  <div class="form-container">
+    <el-form :model="field" ref="form"  label-width="80px">
+      <template v-for="item in formItem">
+        <el-form-item
+          v-if="item.type === 'input'"
+          :key="item.label"
+          :label="item.label"
+          :prop="item.prop"
+          :rules="item.rules"
+        >
+          <el-input v-model="field[item.prop]"></el-input>
+        </el-form-item>
+        <el-form-item
+          v-if="item.type === 'select'"
+          :key="item.label"
+          :label="item.label"
+          :prop="item.prop"
+          :rules="item.rules"
+        >
+          <el-select v-model="field[item.prop]"></el-select>
+        </el-form-item>
+      </template>
+    </el-form>
+  </div>
+</template>
+
+<script>
+import createRules from './createRules'
+export default {
+  name: 'index',
+  props: {
+    item: {
+      type: Array,
+      default: () => []
+    },
+    field: {
+      type: Object,
+      default: () => ({})
+    },
+    rules: {
+      type: Object,
+      default: () => ({})
+    }
+  },
+  data () {
+    return {
+      formItem: [],
+      form: {
+        name: ''
+      }
+    }
+  },
+  methods: {
+
+  },
+  beforeMount () {
+    this.formItem = createRules(this.item)
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
 
 #### 3.8 form组件封装 - message手动生成和自动生成
 
+`components/form/createRules.js`
+
+```javascript
+/**
+ * @author YangLing
+ * @date 2022/7/21 09:26
+ */
+
+const createRules = (data) => {
+  data.forEach(item => {
+    const rulesArray = []
+    if (item.required) {
+      const rule = { required: true, message: item.message || createMessage(item) }
+      rulesArray.push(rule)
+    }
+    item.rules = rulesArray
+  })
+  return data
+}
+
+const createMessage = (data) => {
+  let msg = ''
+  switch (data.type) {
+    case 'input' :
+      msg = '请输入'
+      break
+    case 'select' :
+      msg = '请选择'
+      break
+  }
+  return `${msg}${data.label}`
+}
+
+export default createRules
+
+```
+
+`views/Form.vue`
+
+```vue
+<template>
+  <div>
+    <yang-form :item="formItem" :field="formField" ></yang-form>
+  </div>
+</template>
+
+<script>
+
+export default {
+  name: 'Form',
+  data () {
+    return {
+      formItem: [
+        {
+          type: 'input',
+          prop: 'name',
+          label: '姓名',
+          required: true
+          // rules: [
+          //   {
+          //     required: true,
+          //     message: '必填'
+          //   }
+          // ]
+        },
+        {
+          type: 'select',
+          prop: 'gender',
+          label: '性别',
+          required: true
+          // message: '请输入姓名'
+          // rules: [
+          //   {
+          //     required: true,
+          //     message: '必填'
+          //   }
+          // ]
+        },
+        {
+          type: 'input',
+          prop: 'sex',
+          label: '年龄',
+          required: true
+          // message: '请输入年龄'
+          // rules: [
+          //   {
+          //     required: true,
+          //     message: '必填'
+          //   }
+          // ]
+        }
+      ],
+      formField: {
+        name: '',
+        gender: '',
+        age: ''
+      }
+    }
+  },
+  components: {
+    yangForm: () => import('../components/form/index')
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
 #### 3.9 form组件封装 - 添加新的校验规则
+
+`components/form/createRules.js`
+
+```javascript
+/**
+ * @author YangLing
+ * @date 2022/7/21 09:26
+ */
+
+const createRules = (data) => {
+  data.forEach(item => {
+    let rulesArray = []
+    if (item.required) {
+      const rule = { required: true, message: item.message || createMessage(item) }
+      rulesArray.push(rule)
+    }
+
+    // 判断是否有额外的校验规则
+    if (item.rules && Array.isArray(item.rules) && item.rules.length > 0) {
+      rulesArray = rulesArray.concat(item.rules)
+    }
+
+    item.rules = rulesArray
+  })
+  return data
+}
+
+const createMessage = (data) => {
+  let msg = ''
+  switch (data.type) {
+    case 'input' :
+      msg = '请输入'
+      break
+    case 'select' :
+      msg = '请选择'
+      break
+  }
+  return `${msg}${data.label}`
+}
+
+export default createRules
+
+
+```
+
+`views/Form.vue`
+
+```vue
+<template>
+  <div>
+    <yang-form :item="formItem" :field="formField" ></yang-form>
+  </div>
+</template>
+
+<script>
+
+export default {
+  name: 'Form',
+  data () {
+    return {
+      formItem: [
+        {
+          type: 'input',
+          prop: 'name',
+          label: '姓名',
+          required: true,
+          rules: [
+            { min: 3, max: 10, message: '请输入3~10个字符', trigger: 'blur' }
+          ]
+        },
+        {
+          type: 'select',
+          prop: 'gender',
+          label: '性别',
+          required: true
+        },
+        {
+          type: 'input',
+          prop: 'sex',
+          label: '年龄',
+          required: true
+        }
+      ],
+      formField: {
+        name: '',
+        gender: '',
+        age: ''
+      }
+    }
+  },
+  components: {
+    yangForm: () => import('../components/form/index')
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+
+```
+
+#### 
 
 #### 3.10 form组件封装 - 自定义校验规则
 
-#### 3.11 form组件封装 - 配置phone手机号校验规则
+`components/form/createRules.js`
+
+```vue
+<template>
+  <div>
+    <yang-form :item="formItem" :field="formField" ></yang-form>
+  </div>
+</template>
+
+<script>
+
+export default {
+  name: 'Form',
+  data () {
+    const validateName = (rules, value, callback) => {
+      if (value && value !== '10') {
+        callback(new Error('请输入10'))
+      } else {
+        callback()
+      }
+    }
+    return {
+      formItem: [
+        {
+          type: 'input',
+          prop: 'name',
+          label: '姓名',
+          required: true,
+          rules: [
+            { min: 3, max: 10, message: '请输入3~10个字符', trigger: 'blur' },
+            { validator: validateName, trigger: 'blurt' }
+          ]
+        },
+        {
+          type: 'select',
+          prop: 'gender',
+          label: '性别',
+          required: true
+        },
+        {
+          type: 'input',
+          prop: 'sex',
+          label: '年龄',
+          required: true
+        }
+      ],
+      formField: {
+        name: '',
+        gender: '',
+        age: ''
+      }
+    }
+  },
+  components: {
+    yangForm: () => import('../components/form/index')
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
+
+#### 3.11 form组件封装 - 配置phone手机号、密码、邮箱校验规则
+
+`views/Form.vue`
+
+```vue
+<template>
+  <div>
+    <yang-form :item="formItem" :field="formField"></yang-form>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Form',
+  data () {
+    return {
+      formItem: [
+        {
+          label: '手机号',
+          type: 'input',
+          valueType: 'phone',
+          prop: 'phone',
+          required: true
+        },
+        {
+          label: '密码',
+          type: 'input',
+          valueType: 'password',
+          prop: 'password',
+          required: true
+        },
+        {
+          label: '邮箱',
+          type: 'input',
+          valueType: 'email',
+          prop: 'email',
+          required: true
+        },
+        {
+          label: '年龄',
+          type: 'select',
+          prop: 'age',
+          required: true
+        }
+      ],
+      formField: {
+        phone: '',
+        password: '',
+        age: '',
+        email: ''
+      }
+    }
+  },
+  components: {
+    yangForm: () => import('../components/form/index')
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
+
+`components/form/createRules.js`
+
+```javascript
+/**
+ * @author YangLing
+ * @date 2022/7/21 11:18
+ */
+
+const createRules = (data) => {
+  data.forEach(item => {
+    let rulesArray = []
+    if (item.required) {
+      const rules = { required: true, message: item.message || createMessage(item) }
+      rulesArray.push(rules)
+    }
+
+    // 校验手机号
+    if (item.valueType && item.valueType === 'phone') {
+      const regPhone = /^1[3456789]\d{9}$/
+      const validatePhone = (rule, value, callback) => {
+        if (value && regPhone.test(value)) {
+          callback()
+        } else {
+          callback(new Error('请输入合法的手机号码'))
+        }
+      }
+      const rule = { validator: validatePhone, trigger: 'change' }
+      rulesArray.push(rule)
+    }
+
+    // 校验密码
+    if (item.valueType && item.valueType === 'password') {
+      const resPass = /^[a-zA-Z0-9]{6,18}$/
+
+      const validatePass = (rule, value, callback) => {
+        return resPass.test(value)
+      }
+
+      const rule = { validator: validatePass, trigger: 'change' }
+      rulesArray.push(rule)
+    }
+
+    // 校验邮箱
+    if (item.valueType && item.valueType === 'email') {
+      const regEmail = /1/
+
+      const validateEmail = (rule, value, callback) => {
+        if (regEmail.test(value)) {
+          callback()
+        } else {
+          callback(new Error('请输入合法的邮箱地址'))
+        }
+      }
+
+      const rule = { validator: validateEmail, trigger: 'change' }
+      rulesArray.push(rule)
+    }
+
+    if (item.rules && Array.isArray(item.rules) && item.rules.length > 0) {
+      rulesArray = rulesArray.concat(item.rules)
+    }
+    item.rules = rulesArray
+  })
+  return data
+}
+
+const createMessage = (data) => {
+  let msg = ''
+  switch (data.type) {
+    case 'input' :
+      msg = '请输入'
+      break
+    case 'select' :
+      msg = '请选择'
+      break
+  }
+  return `${msg}${data.label}`
+}
+
+export default createRules
+
+```
+
+
 
 #### 3.12 form组件封装 - 抽离校验方法
 
+`src/utils/validate.js`
+
+```javascript
+/**
+ * @author YangLing
+ * @date 2022/7/21 14:23
+ */
+
+// 校验手机号
+const regPhone = /^1[3456789]\d{9}$/
+export const validatePhone = (rule, value, callback) => {
+  if (value && regPhone.test(value)) {
+    callback()
+  } else {
+    callback(new Error('请输入合法的手机号码'))
+  }
+}
+
+// 校验密码
+const resPass = /^[a-zA-Z0-9]{6,18}$/
+export const validatePass = (rule, value, callback) => {
+  return resPass.test(value)
+}
+
+// 校验邮箱
+const regEmail = /1/
+export const validateEmail = (rule, value, callback) => {
+  if (regEmail.test(value)) {
+    callback()
+  } else {
+    callback(new Error('请输入合法的邮箱地址'))
+  }
+}
+
+```
+
+
+
+`components/form/createRules.js`
+
+```javascript
+/**
+ * @author YangLing
+ * @date 2022/7/21 11:18
+ */
+import { validatePhone, validatePass, validateEmail } from '../../utils/validate'
+const createRules = (data) => {
+  data.forEach(item => {
+    let rulesArray = []
+    if (item.required) {
+      const rules = { required: true, message: item.message || createMessage(item) }
+      rulesArray.push(rules)
+    }
+
+    // 校验手机号
+    if (item.valueType && item.valueType === 'phone') {
+      const rule = { validator: validatePhone, trigger: 'change' }
+      rulesArray.push(rule)
+    }
+
+    // 校验密码
+    if (item.valueType && item.valueType === 'password') {
+      const rule = { validator: validatePass, trigger: 'change' }
+      rulesArray.push(rule)
+    }
+
+    // 校验邮箱
+    if (item.valueType && item.valueType === 'email') {
+      const rule = { validator: validateEmail, trigger: 'change' }
+      rulesArray.push(rule)
+    }
+
+    if (item.rules && Array.isArray(item.rules) && item.rules.length > 0) {
+      rulesArray = rulesArray.concat(item.rules)
+    }
+    item.rules = rulesArray
+  })
+  return data
+}
+
+const createMessage = (data) => {
+  let msg = ''
+  switch (data.type) {
+    case 'input' :
+      msg = '请输入'
+      break
+    case 'select' :
+      msg = '请选择'
+      break
+  }
+  return `${msg}${data.label}`
+}
+
+export default createRules
+
+```
+
+
+
 #### 3.13 form组件封装 - 提交按钮渲染
+
+`views/Form.vue`
+
+```vue
+<template>
+  <div>
+    <yang-form :item="formItem" :field="formField" :button="formButton"></yang-form>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Form',
+  data () {
+    return {
+      formButton: [
+        { label: '提交', key: 'submit', type: 'primary', size: 'mini' },
+        { label: '取消', key: 'cancel', type: 'danger', size: 'small' },
+        { label: '下一个', key: 'next', type: 'success' }
+      ],
+      formItem: [
+        {
+          label: '手机号',
+          type: 'input',
+          valueType: 'phone',
+          prop: 'phone',
+          required: true
+        },
+        {
+          label: '密码',
+          type: 'input',
+          valueType: 'password',
+          prop: 'password',
+          required: true
+        },
+        {
+          label: '邮箱',
+          type: 'input',
+          valueType: 'email',
+          prop: 'email',
+          required: true
+        },
+        {
+          label: '年龄',
+          type: 'select',
+          prop: 'age',
+          required: true
+        }
+      ],
+      formField: {
+        phone: '',
+        password: '',
+        age: '',
+        email: ''
+      }
+    }
+  },
+  components: {
+    yangForm: () => import('../components/form/index')
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
+
+`components/form/index.vue`
+
+
+
+```vue
+<template>
+    <el-form ref="form" :model="field"  label-width="80px">
+      <template  v-for="item in formItem" >
+        <el-form-item v-if="item.type === 'input'" :rules="item.rules" :key="item.label" :label="item.label" :prop="item.prop">
+          <el-input v-model="field[item.prop]"></el-input>
+        </el-form-item>
+        <el-form-item v-if="item.type === 'select'" :rules="item.rules" :key="item.label" :label="item.label" :prop="item.prop">
+          <el-select v-model="field[item.prop]"></el-select>
+        </el-form-item>
+      </template>
+      <el-form-item>
+        <el-button v-for="item in button" v-bind="item" :key="item.key" >{{item.label}}</el-button>
+      </el-form-item>
+    </el-form>
+</template>
+
+<script>
+import createRules from './createRules'
+export default {
+  name: 'yangForm',
+  props: {
+    item: {
+      type: Array,
+      default: () => ([])
+    },
+    field: {
+      type: Object,
+      default: () => ({})
+    },
+    rules: {
+      type: Object,
+      default: () => ({})
+    },
+    button: {
+      type: Array,
+      default: () => ([])
+    }
+  },
+  data () {
+    return {
+      formItem: []
+    }
+  },
+  methods: {
+
+  },
+  beforeMount () {
+    this.formItem = createRules(this.item)
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
 
 #### 3.14 form组件封装 - 提交表单校验数据
 
+`views/Form.vue`
+
+```vue
+<template>
+  <div>
+    <yang-form :item="formItem" :field="formField" :button="formButton"></yang-form>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Form',
+  data () {
+    return {
+      formButton: [
+        { label: '提交', key: 'submit', type: 'primary' },
+        { label: '重置', key: 'cancel', type: 'danger' },
+        { label: '下一步', key: 'next', type: 'success' }
+      ],
+      formItem: [
+        {
+          label: '手机号',
+          type: 'input',
+          valueType: 'phone',
+          prop: 'phone',
+          required: true
+        },
+        {
+          label: '密码',
+          type: 'input',
+          valueType: 'password',
+          prop: 'password',
+          required: true
+        },
+        {
+          label: '邮箱',
+          type: 'input',
+          valueType: 'email',
+          prop: 'email',
+          required: true
+        },
+        {
+          label: '年龄',
+          type: 'select',
+          prop: 'age',
+          required: true
+        }
+      ],
+      formField: {
+        phone: '',
+        password: '',
+        age: '',
+        email: ''
+      }
+    }
+  },
+  components: {
+    yangForm: () => import('../components/form/index')
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+`components/form/index.vue`
+
+```vue
+<template>
+    <el-form ref="form" :model="field"  label-width="80px">
+      <template  v-for="item in formItem" >
+        <el-form-item v-if="item.type === 'input'" :rules="item.rules" :key="item.label" :label="item.label" :prop="item.prop">
+          <el-input v-model="field[item.prop]"></el-input>
+        </el-form-item>
+        <el-form-item v-if="item.type === 'select'" :rules="item.rules" :key="item.label" :label="item.label" :prop="item.prop">
+          <el-select v-model="field[item.prop]"></el-select>
+        </el-form-item>
+      </template>
+      <el-form-item>
+        <el-button @click="handleButton(item)" v-for="item in button" v-bind="item" :key="item.key" >{{item.label}}</el-button>
+      </el-form-item>
+    </el-form>
+</template>
+
+<script>
+import createRules from './createRules'
+export default {
+  name: 'yangForm',
+  props: {
+    item: {
+      type: Array,
+      default: () => ([])
+    },
+    field: {
+      type: Object,
+      default: () => ({})
+    },
+    rules: {
+      type: Object,
+      default: () => ({})
+    },
+    button: {
+      type: Array,
+      default: () => ([])
+    }
+  },
+  data () {
+    return {
+      formItem: []
+    }
+  },
+  methods: {
+    handleButton (item) {
+      if (item.key === 'submit') {
+        this.handleSubmit(item)
+        return
+      }
+      if (item.key === 'cancel') {
+        this.handleCancel(item)
+      }
+    },
+    handleSubmit (item) {
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          console.log('表单提交')
+        }
+      })
+    },
+    handleCancel (item) {
+      console.log('表单重置')
+    }
+  },
+  beforeMount () {
+    this.formItem = createRules(this.item)
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
+
 #### 3.15 form组件封装 - 提交按钮的加载交互
 
+`views/Form.vue`
+
+```vue
+<template>
+  <div>
+    <yang-form :item="formItem" :field="formField" :button="formButton" :before-submit="submitForm"></yang-form>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Form',
+  data () {
+    return {
+      formButton: [
+        { label: '提交', key: 'submit', type: 'primary' },
+        { label: '重置', key: 'cancel', type: 'danger' },
+        { label: '下一步', key: 'next', type: 'success' }
+      ],
+      formItem: [
+        {
+          label: '手机号',
+          type: 'input',
+          // valueType: 'phone',
+          prop: 'phone'
+          // required: true
+        },
+        {
+          label: '密码',
+          type: 'input',
+          // valueType: 'password',
+          prop: 'password'
+          // required: true
+        },
+        {
+          label: '邮箱',
+          type: 'input',
+          // valueType: 'email',
+          prop: 'email'
+          // required: true
+        },
+        {
+          label: '年龄',
+          type: 'select',
+          prop: 'age'
+          // required: true
+        }
+      ],
+      formField: {
+        phone: '',
+        password: '',
+        age: '',
+        email: ''
+      }
+    }
+  },
+  components: {
+    yangForm: () => import('../components/form/index')
+  },
+  methods: {
+    submitForm () {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve()
+        }, 2000)
+      })
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+`components/form/index.vue`
+
+```vue
+<template>
+    <el-form ref="form" :model="field"  label-width="80px">
+      <template  v-for="item in formItem" >
+        <el-form-item v-if="item.type === 'input'" :rules="item.rules" :key="item.label" :label="item.label" :prop="item.prop">
+          <el-input v-model="field[item.prop]"></el-input>
+        </el-form-item>
+        <el-form-item v-if="item.type === 'select'" :rules="item.rules" :key="item.label" :label="item.label" :prop="item.prop">
+          <el-select v-model="field[item.prop]"></el-select>
+        </el-form-item>
+      </template>
+      <el-form-item>
+        <el-button @click="handleButton(item)" :loading="item.loading" v-for="item in button" v-bind="item" :key="item.key" >{{item.label}}</el-button>
+      </el-form-item>
+    </el-form>
+</template>
+
+<script>
+import createRules from './createRules'
+export default {
+  name: 'yangForm',
+  props: {
+    item: {
+      type: Array,
+      default: () => ([])
+    },
+    field: {
+      type: Object,
+      default: () => ({})
+    },
+    rules: {
+      type: Object,
+      default: () => ({})
+    },
+    button: {
+      type: Array,
+      default: () => ([])
+    },
+    beforeSubmit: Function
+  },
+  data () {
+    return {
+      formItem: []
+    }
+  },
+  methods: {
+    handleButton (item) {
+      if (item.key === 'submit') {
+        this.handleSubmit(item)
+        return
+      }
+      if (item.key === 'cancel') {
+        this.handleCancel(item)
+      }
+    },
+    handleSubmit (item) {
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          if (typeof this.beforeSubmit === 'function') {
+            this.$set(item, 'loading', true)
+            this.beforeSubmit().then(response => {
+              console.log('成功')
+              this.$set(item, 'loading', false)
+            }).catch(() => {
+              console.log('失败')
+              this.$set(item, 'loading', false)
+            })
+          }
+          console.log('表单提交')
+        }
+      })
+    },
+    handleCancel (item) {
+      this.$refs.form.resetFields()
+      item.callback && item.callback()
+    }
+  },
+  beforeMount () {
+    this.formItem = createRules(this.item)
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
+
 #### 3.16 form组件封装 - 数据重置,callback事件回调
+
+`views/Form.vue`
+
+```vue
+<template>
+  <div>
+    <yang-form :item="formItem" :field="formField" :button="formButton"></yang-form>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Form',
+  data () {
+    return {
+      formButton: [
+        { label: '提交', key: 'submit', type: 'primary' },
+        { label: '重置', key: 'cancel', type: 'danger' },
+        { label: '下一步', key: 'next', type: 'success' }
+      ],
+      formItem: [
+        {
+          label: '手机号',
+          type: 'input',
+          valueType: 'phone',
+          prop: 'phone',
+          required: true
+        },
+        {
+          label: '密码',
+          type: 'input',
+          valueType: 'password',
+          prop: 'password',
+          required: true
+        },
+        {
+          label: '邮箱',
+          type: 'input',
+          valueType: 'email',
+          prop: 'email',
+          required: true
+        },
+        {
+          label: '年龄',
+          type: 'select',
+          prop: 'age',
+          required: true
+        }
+      ],
+      formField: {
+        phone: '',
+        password: '',
+        age: '',
+        email: ''
+      }
+    }
+  },
+  components: {
+    yangForm: () => import('../components/form/index')
+  },
+  methods: {
+
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
+
+`components/form/index.vue`
+
+```vue
+
+<template>
+    <el-form ref="form" :model="field"  label-width="80px">
+      <template  v-for="item in formItem" >
+        <el-form-item v-if="item.type === 'input'" :rules="item.rules" :key="item.label" :label="item.label" :prop="item.prop">
+          <el-input v-model="field[item.prop]"></el-input>
+        </el-form-item>
+        <el-form-item v-if="item.type === 'select'" :rules="item.rules" :key="item.label" :label="item.label" :prop="item.prop">
+          <el-select v-model="field[item.prop]"></el-select>
+        </el-form-item>
+      </template>
+      <el-form-item>
+        <el-button @click="handleButton(item)" v-for="item in button" v-bind="item" :key="item.key" >{{item.label}}</el-button>
+      </el-form-item>
+    </el-form>
+</template>
+
+<script>
+import createRules from './createRules'
+export default {
+  name: 'yangForm',
+  props: {
+    item: {
+      type: Array,
+      default: () => ([])
+    },
+    field: {
+      type: Object,
+      default: () => ({})
+    },
+    rules: {
+      type: Object,
+      default: () => ({})
+    },
+    button: {
+      type: Array,
+      default: () => ([])
+    }
+  },
+  data () {
+    return {
+      formItem: []
+    }
+  },
+  methods: {
+    handleButton (item) {
+      if (item.key === 'submit') {
+        this.handleSubmit(item)
+        return
+      }
+      if (item.key === 'cancel') {
+        this.handleCancel(item)
+      }
+    },
+    handleSubmit (item) {
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          console.log('表单提交')
+        }
+      })
+    },
+    handleCancel (item) {
+      this.$refs.form.resetFields()
+      item.callback && item.callback()
+    }
+  },
+  beforeMount () {
+    this.formItem = createRules(this.item)
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
 
 #### 3.17 form组件封装 - 使用自己封装的button按钮
 
 #### 3.18 form组件封装 - 动态组件 - watch初始化数据
 
+`components/control/input/index.vue`
+
+```vue
+<template>
+  <div>
+    <el-input v-model="val"></el-input>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'InputComponent',
+  props: {
+    value: {
+      type: [String, Number],
+      default: ''
+    }
+  },
+  data () {
+    return {
+      val: ''
+    }
+  },
+  watch: {
+    value: {
+      handler (newValue) {
+        this.val = newValue
+      },
+      immediate: true
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
+
+`views/Form.vue`
+
+```vue
+<template>
+  <div>
+    <yang-form :item="formItem" :field="formField" :button="formButton" :before-submit="submitForm"></yang-form>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Form',
+  data () {
+    return {
+      formButton: [
+        { label: '提交', key: 'submit', type: 'primary' },
+        { label: '重置', key: 'cancel', type: 'danger' },
+        { label: '下一步', key: 'next', type: 'success' }
+      ],
+      formItem: [
+        {
+          label: '手机号',
+          type: 'input',
+          // valueType: 'phone',
+          prop: 'phone'
+          // required: true
+        },
+        {
+          label: '密码',
+          type: 'input',
+          // valueType: 'password',
+          prop: 'password'
+          // required: true
+        },
+        {
+          label: '邮箱',
+          type: 'input',
+          // valueType: 'email',
+          prop: 'email'
+          // required: true
+        },
+        {
+          label: '年龄',
+          type: 'input',
+          prop: 'age'
+          // required: true
+        }
+      ],
+      formField: {
+        phone: '17802901987',
+        password: '',
+        age: '',
+        email: ''
+      }
+    }
+  },
+  components: {
+    yangForm: () => import('../components/form/index')
+  },
+  methods: {
+    submitForm () {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve()
+        }, 2000)
+      })
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
+
+`components/form/index.vue`
+
+```vue
+<template>
+    <el-form ref="form" :model="field"  label-width="80px">
+      <template  v-for="item in formItem" >
+        <el-form-item :rules="item.rules" :key="item.label" :label="item.label" :prop="item.prop">
+          <component :value="field[item.prop]" :config="item"  :is="!item.type ? 'com-text' : `com-${item.type}`"></component>
+        </el-form-item>
+      </template>
+      <el-form-item>
+        <el-button @click="handleButton(item)" :loading="item.loading" v-for="item in button" v-bind="item" :key="item.key" >{{item.label}}</el-button>
+      </el-form-item>
+    </el-form>
+</template>
+
+<script>
+import createRules from './createRules'
+const modules = {}
+const files = require.context('../control', true, /index.vue$/i)
+files.keys().forEach(item => {
+  const key = item.split('/')
+  const name = key[1]
+  modules[`com-${name}`] = files(item).default
+})
+export default {
+  name: 'yangForm',
+  components: {
+    ...modules
+  },
+  props: {
+    item: {
+      type: Array,
+      default: () => ([])
+    },
+    field: {
+      type: Object,
+      default: () => ({})
+    },
+    rules: {
+      type: Object,
+      default: () => ({})
+    },
+    button: {
+      type: Array,
+      default: () => ([])
+    },
+    beforeSubmit: Function
+  },
+  data () {
+    return {
+      formItem: []
+    }
+  },
+  methods: {
+    handleButton (item) {
+      if (item.key === 'submit') {
+        this.handleSubmit(item)
+        return
+      }
+      if (item.key === 'cancel') {
+        this.handleCancel(item)
+      }
+    },
+    handleSubmit (item) {
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          if (typeof this.beforeSubmit === 'function') {
+            this.$set(item, 'loading', true)
+            this.beforeSubmit().then(response => {
+              console.log('成功')
+              this.$set(item, 'loading', false)
+            }).catch(() => {
+              console.log('失败')
+              this.$set(item, 'loading', false)
+            })
+          }
+          console.log('表单提交')
+        }
+      })
+    },
+    handleCancel (item) {
+      this.$refs.form.resetFields()
+      item.callback && item.callback()
+    }
+  },
+  beforeMount () {
+    this.formItem = createRules(this.item)
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
+
 #### 3.19 form组件封装 - 动态组件 - emit的update方法, 同步数据
+
+
+
+`components/form/index.vue`
+
+```vue
+<template>
+    <el-form ref="form" :model="field"  label-width="80px">
+      <template  v-for="item in formItem" >
+        <el-form-item :rules="item.rules" :key="item.label" :label="item.label" :prop="item.prop">
+          <component :value.sync="field[item.prop]" :config="item"  :is="!item.type ? 'com-text' : `com-${item.type}`"></component>
+        </el-form-item>
+      </template>
+      <el-form-item>
+        <el-button @click="handleButton(item)" :loading="item.loading" v-for="item in button" v-bind="item" :key="item.key" >{{item.label}}</el-button>
+      </el-form-item>
+    </el-form>
+</template>
+
+<script>
+import createRules from './createRules'
+const modules = {}
+const files = require.context('../control', true, /index.vue$/i)
+files.keys().forEach(item => {
+  const key = item.split('/')
+  const name = key[1]
+  modules[`com-${name}`] = files(item).default
+})
+export default {
+  name: 'yangForm',
+  components: {
+    ...modules
+  },
+  props: {
+    item: {
+      type: Array,
+      default: () => ([])
+    },
+    field: {
+      type: Object,
+      default: () => ({})
+    },
+    rules: {
+      type: Object,
+      default: () => ({})
+    },
+    button: {
+      type: Array,
+      default: () => ([])
+    },
+    beforeSubmit: Function
+  },
+  data () {
+    return {
+      formItem: []
+    }
+  },
+  methods: {
+    handleButton (item) {
+      if (item.key === 'submit') {
+        this.handleSubmit(item)
+        return
+      }
+      if (item.key === 'cancel') {
+        this.handleCancel(item)
+      }
+    },
+    handleSubmit (item) {
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          if (typeof this.beforeSubmit === 'function') {
+            this.$set(item, 'loading', true)
+            this.beforeSubmit().then(response => {
+              console.log('成功')
+              this.$set(item, 'loading', false)
+            }).catch(() => {
+              console.log('失败')
+              this.$set(item, 'loading', false)
+            })
+          }
+          console.log('表单提交')
+        }
+      })
+    },
+    handleCancel (item) {
+      this.$refs.form.resetFields()
+      item.callback && item.callback()
+    }
+  },
+  beforeMount () {
+    this.formItem = createRules(this.item)
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
+
+`components/control/input/index.vue`
+
+```vue
+<template>
+  <div>
+    <el-input v-model="val" @input="handleInputEvent"></el-input>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'InputComponent',
+  props: {
+    value: {
+      type: [String, Number],
+      default: ''
+    }
+  },
+  data () {
+    return {
+      val: ''
+    }
+  },
+  watch: {
+    value: {
+      handler (newValue) {
+        this.val = newValue
+      },
+      immediate: true
+    }
+  },
+  methods: {
+    handleInputEvent () {
+      this.$emit('update:value', this.val)
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
 
 
 
@@ -4294,17 +6448,1034 @@ export default {
 
 #### 4.1 select组件集成 - option
 
+`views/Form.vue`
+
+```vue
+<template>
+  <div>
+    <yang-form :item="formItem" :field="formField" :button="formButton" :before-submit="submitForm"></yang-form>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Form',
+  data () {
+    return {
+      formButton: [
+        { label: '提交', key: 'submit', type: 'primary' },
+        { label: '重置', key: 'cancel', type: 'danger' },
+        { label: '下一步', key: 'next', type: 'success' }
+      ],
+      formItem: [
+        {
+          label: '手机号',
+          type: 'input',
+          valueType: 'phone',
+          prop: 'phone',
+          required: true
+        },
+        {
+          label: '教室',
+          type: 'select',
+          prop: 'class_room',
+          required: true,
+          options: [
+            { label: '1班', value: 1 },
+            { label: '2班', value: 2 },
+            { label: '3班', value: 3 }
+          ]
+        }
+      ],
+      formField: {
+        phone: '17802901987',
+        password: '',
+        age: '',
+        email: ''
+      }
+    }
+  },
+  components: {
+    yangForm: () => import('../components/form/index')
+  },
+  methods: {
+    submitForm () {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve()
+        }, 2000)
+      })
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+`components/control/select/index.vue`
+
+```vue
+<template>
+  <div>
+    <el-select v-model="val" >
+      <el-option>
+      </el-option>
+    </el-select>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'SelectComponents',
+  props: {
+    config: {
+      type: Object,
+      default: () => ({})
+    },
+    value: {
+      type: [String, Number],
+      default: ''
+    }
+  },
+  data () {
+    return {
+      val: ''
+    }
+  },
+  watch: {
+    value: {
+      handler (newValue) {
+        this.val = newValue
+      },
+      immediate: true
+    }
+  },
+  methods: {
+    handleInputEvent () {
+      this.$emit('update:value', this.val)
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
+
 #### 4.2  select组件集成 - 初始化option
+
+`components/control/select/index.vue`
+
+```vue
+<template>
+  <div>
+    <el-select v-model="val" @change="handleChangeEvent">
+      <el-option v-for="item in option" :key="item.value" :label="item.label" :value="item.value">
+      </el-option>
+    </el-select>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'SelectComponents',
+  props: {
+    config: {
+      type: Object,
+      default: () => ({})
+    },
+    value: {
+      type: [String, Number],
+      default: ''
+    }
+  },
+  data () {
+    return {
+      val: '',
+      option: []
+    }
+  },
+  watch: {
+    value: {
+      handler (newValue) {
+        this.val = newValue
+      },
+      immediate: true
+    },
+    config: {
+      handler (newValue) {
+        this.initOptions()
+      },
+      immediate: true
+    }
+  },
+  methods: {
+    handleChangeEvent (value) {
+
+    },
+    initOptions () {
+      const option = this.config.options
+      if (option && Array.isArray(option) && option.length > 0) {
+        this.option = option
+      }
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
 
 #### 4.3  select组件集成 - 动态option的key(1)
 
+`views/Form.vue`
+
+```vue
+<template>
+  <div>
+    <yang-form :item="formItem" :field="formField" :button="formButton" :before-submit="submitForm"></yang-form>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Form',
+  data () {
+    return {
+      formButton: [
+        { label: '提交', key: 'submit', type: 'primary' },
+        { label: '重置', key: 'cancel', type: 'danger' },
+        { label: '下一步', key: 'next', type: 'success' }
+      ],
+      formItem: [
+        {
+          label: '手机号',
+          type: 'input',
+          valueType: 'phone',
+          prop: 'phone',
+          required: true
+        },
+        {
+          label: '教室',
+          type: 'select',
+          prop: 'class_room',
+          required: true,
+          props: {
+            label: 'name',
+            value: 'id'
+          },
+          options: [
+            { name: '1班', id: 1 },
+            { name: '2班', id: 2 },
+            { name: '3班', id: 3 }
+          ]
+          // options: [
+          //   { label: '1班', value: 1 },
+          //   { label: '2班', value: 2 },
+          //   { label: '3班', value: 3 }
+          // ]
+        }
+      ],
+      formField: {
+        phone: '17802901987',
+        password: '',
+        age: '',
+        email: ''
+      }
+    }
+  },
+  components: {
+    yangForm: () => import('../components/form/index')
+  },
+  methods: {
+    submitForm () {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve()
+        }, 2000)
+      })
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
+
+`components/control/select/index.vue`
+
+```vue
+<template>
+  <div>
+    <el-select v-model="val" @change="handleChangeEvent">
+      <el-option v-for="item in option" :key="item[props.value]" :label="item[props.label]" :value="item[props.value]">
+      </el-option>
+    </el-select>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'SelectComponents',
+  props: {
+    config: {
+      type: Object,
+      default: () => ({})
+    },
+    value: {
+      type: [String, Number],
+      default: ''
+    }
+  },
+  data () {
+    return {
+      val: '',
+      option: [],
+      props: {
+        label: 'label',
+        value: 'value'
+      }
+    }
+  },
+  watch: {
+    value: {
+      handler (newValue) {
+        this.val = newValue
+      },
+      immediate: true
+    },
+    config: {
+      handler (newValue) {
+        this.initOptions()
+        this.initProps()
+      },
+      immediate: true
+    }
+  },
+  methods: {
+    handleChangeEvent (value) {
+      this.$emit('update:value', value)
+    },
+    initOptions () {
+      const option = this.config.options
+      if (option && Array.isArray(option) && option.length > 0) {
+        this.option = option
+      }
+    },
+    initProps () {
+      const props = this.config.props
+      const keys = Object.keys(this.props)
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
+
 #### 4.4 select组件集成 - 动态option的key(2)
+
+`components/control/select/index.vue`
+
+```vue
+<template>
+  <div>
+    <el-select v-model="val" @change="handleChangeEvent">
+      <el-option v-for="item in option" :key="item[props.value]" :label="item[props.label]" :value="item[props.value]">
+      </el-option>
+    </el-select>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'SelectComponents',
+  props: {
+    config: {
+      type: Object,
+      default: () => ({})
+    },
+    value: {
+      type: [String, Number],
+      default: ''
+    }
+  },
+  data () {
+    return {
+      val: '',
+      option: [],
+      props: {
+        label: 'label',
+        value: 'value'
+      }
+    }
+  },
+  watch: {
+    value: {
+      handler (newValue) {
+        this.val = newValue
+      },
+      immediate: true
+    },
+    config: {
+      handler (newValue) {
+        this.initOptions()
+        this.initProps()
+      },
+      immediate: true
+    }
+  },
+  methods: {
+    handleChangeEvent (value) {
+      this.$emit('update:value', value)
+    },
+    initOptions () {
+      const option = this.config.options
+      if (option && Array.isArray(option) && option.length > 0) {
+        this.option = option
+      }
+    },
+    initProps () {
+      const option = this.config.props
+      const keys = Object.keys(this.props)
+
+      if (option && Object.prototype.toString.call(option) === '[object Object]') {
+        for (const key in option) {
+          if (keys.includes(key)) {
+            this.props[key] = option[key]
+          }
+        }
+      }
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
 
 #### 4.5 select组件集成 - 接口异步数据1
 
+`views/Form.vue`
+
+```vue
+<template>
+  <div>
+    <yang-form :item="formItem" :field="formField" :button="formButton" :before-submit="handleBeforeSubmit"></yang-form>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Form',
+  data () {
+    return {
+      formButton: [
+        { label: '提交', key: 'submit', type: 'primary' },
+        { label: '重置', key: 'cancel', type: 'danger' },
+        { label: '下一步', key: 'next', type: 'success' }
+      ],
+      formItem: [
+        {
+          label: '手机号',
+          type: 'input',
+          valueType: 'phone',
+          prop: 'phone',
+          required: true
+        },
+        {
+          label: '教室',
+          type: 'select',
+          prop: 'class_room',
+          required: true,
+          options: [
+            {
+              label: '一教',
+              value: 1
+            },
+            {
+              label: '二教',
+              value: 2
+            },
+            {
+              label: '三教',
+              value: 3
+            },
+            {
+              label: '四教',
+              value: 4
+            }
+          ]
+        },
+        {
+          label: '异步教室',
+          type: 'select',
+          prop: 'class_room1',
+          required: true,
+          url: '/api/classname/',
+          method: 'get',
+          initRequest: true
+        }
+      ],
+      formField: {
+        phone: '17802901987',
+        password: '',
+        age: '',
+        email: ''
+      }
+    }
+  },
+  components: {
+    yangForm: () => import('../components/form/index')
+  },
+  methods: {
+    handleBeforeSubmit () {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          // eslint-disable-next-line prefer-promise-reject-errors
+          reject()
+        }, 2000)
+      })
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
+
+`components/control/select/index.vue`
+
+```vue
+<template>
+  <div>
+    <el-select v-model="val" @change="handleChangeEvent">
+      <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+    </el-select>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'SelectComponent',
+  props: {
+    value: {
+      type: [String, Number],
+      default: ''
+    },
+    config: {
+      type: Object,
+      default: () => ({})
+    }
+  },
+  watch: {
+    value: {
+      handler (newValue) {
+        this.val = newValue
+      },
+      immediate: true
+    },
+    config: {
+      handler (val) {
+        this.initOptions()
+      },
+      immediate: true,
+      deep: true
+    }
+  },
+  data () {
+    return {
+      val: '',
+      options: []
+    }
+  },
+  methods: {
+    handleChangeEvent (value) {
+      console.log(value)
+      this.$emit('update:value', value)
+    },
+    initOptions () {
+      const initRequest = this.config.initRequest
+      const url = this.config.url
+      const method = this.config.method
+      const options = this.config.options
+
+      if (url) {
+        this.fetchOptions(url, method)
+      }
+
+      if (options && Array.isArray(options) && options.length > 0) {
+        this.options = options
+        console.log(options)
+      }
+    },
+    fetchOptions (url, method) {
+
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
+
 #### 4.6 select组件集成 - 接口异步数据2
 
+`views/Form.vue`
+
+```vue
+<template>
+  <div>
+    <yang-form :item="formItem" :field="formField" :button="formButton" :before-submit="handleBeforeSubmit"></yang-form>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Form',
+  data () {
+    return {
+      formButton: [
+        { label: '提交', key: 'submit', type: 'primary' },
+        { label: '重置', key: 'cancel', type: 'danger' },
+        { label: '下一步', key: 'next', type: 'success' }
+      ],
+      formItem: [
+        {
+          label: '手机号',
+          type: 'input',
+          valueType: 'phone',
+          prop: 'phone',
+          required: true
+        },
+        {
+          label: '教室',
+          type: 'select',
+          prop: 'class_room',
+          required: true,
+          options: [
+            {
+              label: '一教',
+              value: 1
+            },
+            {
+              label: '二教',
+              value: 2
+            },
+            {
+              label: '三教',
+              value: 3
+            },
+            {
+              label: '四教',
+              value: 4
+            }
+          ]
+        },
+        {
+          label: '异步教室',
+          type: 'select',
+          prop: 'class_room1',
+          required: true,
+          url: '/classroom/',
+          method: 'get',
+          initRequest: true,
+          props: {
+            label: 'class_name',
+            value: 'id'
+          }
+        }
+      ],
+      formField: {
+        phone: '17802901987',
+        password: '',
+        age: '',
+        email: ''
+      }
+    }
+  },
+  components: {
+    yangForm: () => import('../components/form/index')
+  },
+  methods: {
+    handleBeforeSubmit () {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          // eslint-disable-next-line prefer-promise-reject-errors
+          reject()
+        }, 2000)
+      })
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+`components/control/select/index.vue`
+
+```vue
+<template>
+  <div>
+    <el-select v-model="val" @change="handleChangeEvent">
+      <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+    </el-select>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'SelectComponent',
+  props: {
+    value: {
+      type: [String, Number],
+      default: ''
+    },
+    config: {
+      type: Object,
+      default: () => ({})
+    }
+  },
+  watch: {
+    value: {
+      handler (newValue) {
+        this.val = newValue
+      },
+      immediate: true
+    },
+    config: {
+      handler (val) {
+        this.initOptions()
+      },
+      immediate: true,
+      deep: true
+    }
+  },
+  data () {
+    return {
+      val: '',
+      options: []
+    }
+  },
+  computed: {
+    url () {
+      return this.config?.url
+    },
+    initRequest () {
+      return this.config?.initRequest
+    },
+    methods () {
+      return this.config?.methods || 'get'
+    }
+  },
+  methods: {
+    handleChangeEvent (value) {
+      console.log(value)
+      this.$emit('update:value', value)
+    },
+    initOptions () {
+      if (this.url) {
+        this.fetchOptions()
+        return false
+      }
+      const options = this.config.options
+      if (options && Array.isArray(options) && options.length > 0) {
+        this.options = options
+        console.log(options)
+      }
+    },
+    async fetchOptions () {
+      if (!this.initRequest) {
+        return false
+      }
+      try {
+        const requestData = {
+          url: this.url,
+          method: this.method
+        }
+
+        const response = await this.$axios(requestData)
+        console.log(response.data.data)
+        let data = response.data.data
+        if (this.format && typeof this.format === 'function') {
+          data = this.format(response.data)
+        }
+        this.options = data
+
+        this.onLoad && this.$emit('onLoad', response.data)
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
+
 #### 4.7 select组件集成 - 远程搜索
+
+`views/Fome.vue`
+
+```vue
+<template>
+  <div>
+    <yang-form :item="formItem" :field="formField" :button="formButton" :before-submit="handleBeforeSubmit"></yang-form>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Form',
+  data () {
+    return {
+      formButton: [
+        { label: '提交', key: 'submit', type: 'primary' },
+        { label: '重置', key: 'cancel', type: 'danger' },
+        { label: '下一步', key: 'next', type: 'success' }
+      ],
+      formItem: [
+        {
+          label: '手机号',
+          type: 'input',
+          valueType: 'phone',
+          prop: 'phone',
+          required: true
+        },
+        {
+          label: '教室',
+          type: 'select',
+          prop: 'class_room',
+          required: true,
+          options: [
+            {
+              label: '一教',
+              value: 1
+            },
+            {
+              label: '二教',
+              value: 2
+            },
+            {
+              label: '三教',
+              value: 3
+            },
+            {
+              label: '四教',
+              value: 4
+            }
+          ]
+        },
+        {
+          label: '异步教室',
+          type: 'select',
+          prop: 'class_room1',
+          required: true,
+          url: '/classroom/',
+          method: 'get',
+          initRequest: true,
+          props: {
+            label: 'class_name',
+            value: 'id'
+          },
+          fetchSearch: true
+        }
+      ],
+      formField: {
+        phone: '17802901987',
+        password: '',
+        age: '',
+        email: ''
+      }
+    }
+  },
+  components: {
+    yangForm: () => import('../components/form/index')
+  },
+  methods: {
+    handleBeforeSubmit () {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          // eslint-disable-next-line prefer-promise-reject-errors
+          reject()
+        }, 2000)
+      })
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+`components/control/select/index.vue`
+
+```vue
+<template>
+  <div>
+    <el-select v-model="val" @change="handleChangeEvent" filterable remote :remote-method="keywordRequest">
+      <el-option   v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+    </el-select>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'SelectComponent',
+  props: {
+    value: {
+      type: [String, Number],
+      default: ''
+    },
+    config: {
+      type: Object,
+      default: () => ({})
+    }
+  },
+  watch: {
+    value: {
+      handler (newValue) {
+        this.val = newValue
+      },
+      immediate: true
+    },
+    config: {
+      handler (val) {
+        this.initOptions()
+      },
+      immediate: true,
+      deep: true
+    }
+  },
+  data () {
+    return {
+      val: '',
+      options: []
+    }
+  },
+  computed: {
+    url () {
+      return this.config?.url
+    },
+    initRequest () {
+      return this.config?.initRequest
+    },
+    methods () {
+      return this.config?.methods || 'get'
+    },
+    fetchSearch () {
+      return this.config?.fetchSearch
+    }
+  },
+  methods: {
+    handleChangeEvent (value) {
+      console.log(value)
+      this.$emit('update:value', value)
+    },
+    initOptions () {
+      if (this.url) {
+        this.fetchOptions()
+        return false
+      }
+      const options = this.config.options
+      if (options && Array.isArray(options) && options.length > 0) {
+        this.options = options
+        console.log(options)
+      }
+    },
+    fetchOptions () {
+      if (!this.initRequest) {
+        return false
+      }
+
+      this.getOptions()
+    },
+    keywordRequest (query) {
+      if (query) {
+        this.getOptions()
+      }
+    },
+    async getOptions () {
+      try {
+        const requestData = {
+          url: this.url,
+          method: this.method
+        }
+
+        const response = await this.$axios(requestData)
+        let data = response.data.data
+        if (this.format && typeof this.format === 'function') {
+          data = this.format(response.data)
+        }
+        this.options = data
+
+        this.onLoad && this.$emit('onLoad', response.data)
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  }
+}
+</script>
+
+<style scoped>
+
+</style>
+
+```
+
+
 
 #### 4.8 select组件集成 - 远程搜索定义字段名称
 
