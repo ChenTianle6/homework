@@ -1,8 +1,3 @@
-/**
- * @author YangLing
- * @date 2022/7/21 14:23
- */
-
 // 校验手机号
 const regPhone = /^1[3456789]\d{9}$/
 export const validatePhone = (rule, value, callback) => {
