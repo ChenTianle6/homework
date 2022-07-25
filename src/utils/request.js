@@ -1,3 +1,7 @@
+/**
+ * @author YangLing
+ * @date 2022/7/19 12:55
+ */
 // 导入axios
 import axios from 'axios'
 
@@ -27,6 +31,11 @@ service.interceptors.response.use((response) => {
 
 // 统一了传参处理
 const request = (options) => {
+  // if (options.method.toLowerCase() === 'get') {
+  //   options.params = options.data || {}
+  // }
+  // console.log(options)
+
   // 解决请求多个代理名称问题
   console.log(options.basePath)
   if (options.basePath) {
