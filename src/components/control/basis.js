@@ -1,8 +1,3 @@
-/**
- * @author YangLing
- * @date 2022/7/25 14:15
- */
-
 export const props = {
   value: {
     type: [String, Number, Array, Date],

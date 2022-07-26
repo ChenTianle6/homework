@@ -1,7 +1,3 @@
-/**
- * @author YangLing
- * @date 2022/7/21 11:18
- */
 import { validatePhone, validatePass, validateEmail } from '../../utils/validate'
 const createRules = (data) => {
   data.forEach(item => {

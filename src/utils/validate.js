@@ -1,8 +1,3 @@
-/**
- * @author YangLing
- * @date 2022/7/21 14:23
- */
-
 // 校验手机号
 const regPhone = /^1[3456789]\d{9}$/
 export const validatePhone = (rule, value, callback) => {
@@ -28,12 +23,3 @@ export const validateEmail = (rule, value, callback) => {
     callback(new Error('请输入合法的邮箱地址'))
   }
 }
-
-/**
- *
- * 通用型组件
- *
- * 业务组件
- *
- *
- */
